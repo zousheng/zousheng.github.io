@@ -13,12 +13,10 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Your awesome title
-email: your-email@example.com
+title: 加油的tech blogs
+email: zouyu12344444@126.com
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+      一个进入IT行业7年之久的IT从业者，第一年做java二次开发，第二年被Linux所吸引，转为linux Admin, 再之后到了互联网时代，也转型到了互联网运维，从事云计算和各种分布式组件。现在又到了AI和以数据驱动的时代，希望能跟上技术更新的步伐，不断提高个人技能.....
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
