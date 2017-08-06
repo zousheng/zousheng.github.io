@@ -1,7 +1,8 @@
 ---
 layout: post
-title: "rabbitmq vs kafka"
-date: July 20, 2017
+title: rabbitmq vs kafka
+categories: [Technology]
+tags: [rabbitmq, kafka]
 ---
 
 ###Kafka VS Rabbitmq
