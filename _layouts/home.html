@@ -1,0 +1,18 @@
+---
+layout: default
+---
+{{ content }}
+
+<div class="container">
+{% if paginator.page == 1 %}
+  <h1 class="page-header">{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}<small></small></a></h1>
+
+  {% include layout/carousel.html %}
+
+  <hr class="masthead-hr">
+  {% include layout/post_sample.html %}
+{% endif %}
+
+{% include layout/posts.html posts=paginator.posts %}
+{% include layout/pagination.html %}
+</div>

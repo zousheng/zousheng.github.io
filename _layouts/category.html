@@ -1,0 +1,7 @@
+---
+layout: page
+---
+{{ content }}
+
+{% assign posts = site.categories.[page.category] %}
+{% include layout/posts.html posts=posts %}
