@@ -1,3 +1,9 @@
+---
+layout: post
+title: "rabbitmq vs kafka"
+date: July 20, 2017
+---
+
 ###Kafka VS Rabbitmq
 
 >Message queue is a well known architectural pattern that provide an asynchronous communication protocol. It means that sender and receiver of the message are completely detached, they do not need to interact with a queueing system at the same time.
