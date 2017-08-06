@@ -3,6 +3,7 @@ layout: post
 title: rabbitmq vs kafka
 categories: [Technology]
 tags: [rabbitmq, kafka]
+permalink: /rabbitmq-vs-kafka/
 ---
 
 ###Kafka VS Rabbitmq
