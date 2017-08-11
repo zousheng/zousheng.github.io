@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Mesos task cpu & mem setting
+title: Mesos isolation cgroups/cpu & cgroups/mem
 categories: [Technology]
-tags: [mesos, isolation]
-permalink: /mesos-task-cpu-mem-setting/
+tags: [mesos, isolation, cgroups/cpu, cgroups/mem]
+permalink: /mesos-isolation-cgroups/
 ---
 
 
@@ -74,18 +74,20 @@ Alias for posix/disk
 
   * `mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，生产环境不适合，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) `
   
-  * `mesos isolation 配置 cgroups/cpu,cgroups/mem , cpu使用的方式是cpu shared,这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，会调用oom-killer 销毁整个容器， 相当于kill -9 杀掉进程。 生产环境要合理配置`
+  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （没有启用CFS）， cpu使用的方式是cpu shared，这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，cgroup manager会销毁对应的容器，利用 oom-killer 来杀掉对应的进程，相当于kill -9 杀掉进程。 生产环境要合理配置任务的 mem 值来避免oom-killer发生`
   
-  * `mesos isolation 配置 cgroups/cpu,cgroups/mem 同时配置 CFS，这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量会下降， 但是不会被 kill`  
+  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （启用 CFS），这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于设定了一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量下降， 但是不会被 kill`  
   
-  * `marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值`
+  * `对于是否启用 CFS 要根据应用场景和服务类型来选择`
+
+  * `marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值, 理解这点对合理设置任务的 CPUS 很有帮助`
 
 
 #### 调优
 
  * `沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率`
  
- * `针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3，这样总的 cpu 核数会降低很多`
+ * `针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3`
 
 * `针对线上服务的 marathon CPUS 值适当调低， 线上的 mesos slave CPU 使用率一般在 30% ～ 40% 之间，使用率其实不高， 调整后整体资源使用率会更合理`
 
