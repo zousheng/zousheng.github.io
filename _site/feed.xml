@@ -1,29 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.5.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-08-11T08:59:40+08:00</updated><id>http://localhost:4000/</id><title type="html">加油的Tech Blog</title><subtitle>一个进入IT行业7年之久的IT从业者，第一年做java二次开发，第二年被Linux所吸引，转为linux Admin, 再之后到了互联网时代，也转型到了互联网运维，从事云计算和各种分布式组件。现在又到了AI和以数据驱动的时代，希望能跟上技术更新的步伐，不断提高个人技能.....
-</subtitle><entry><title type="html">Mesos task cpu &amp;amp; mem setting</title><link href="http://localhost:4000/mesos-task-cpu-mem-setting/" rel="alternate" type="text/html" title="Mesos task cpu &amp; mem setting" /><published>2017-08-11T00:00:00+08:00</published><updated>2017-08-11T00:00:00+08:00</updated><id>http://localhost:4000/mesos-task-cpu-mem-setting</id><content type="html" xml:base="http://localhost:4000/mesos-task-cpu-mem-setting/">&lt;!--excerpt--&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.5.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-08-11T09:23:42+08:00</updated><id>http://localhost:4000/</id><title type="html">加油的Tech Blog</title><subtitle>一个进入IT行业7年之久的IT从业者，第一年做java二次开发，第二年被Linux所吸引，转为linux Admin, 再之后到了互联网时代，也转型到了互联网运维，从事云计算和各种分布式组件。现在又到了AI和以数据驱动的时代，希望能跟上技术更新的步伐，不断提高个人技能.....
+</subtitle><entry><title type="html">Mesos isolation cgroups/cpu &amp;amp; cgroups/mem</title><link href="http://localhost:4000/mesos-isolation-cgroups/" rel="alternate" type="text/html" title="Mesos isolation cgroups/cpu &amp; cgroups/mem" /><published>2017-08-11T00:00:00+08:00</published><updated>2017-08-11T00:00:00+08:00</updated><id>http://localhost:4000/mesos-task-cpu-mem-setting</id><content type="html" xml:base="http://localhost:4000/mesos-isolation-cgroups/">&lt;!--excerpt--&gt;
 
-&lt;h1 id=&quot;mesos-task-cpu--mem-setting&quot;&gt;##Mesos task cpu &amp;amp; mem setting&lt;/h1&gt;
+&lt;h2 id=&quot;mesos-task-cpu--mem-setting&quot;&gt;Mesos task cpu &amp;amp; mem setting&lt;/h2&gt;
 
-&lt;p&gt;###Runtime Isolators&lt;/p&gt;
+&lt;h3 id=&quot;runtime-isolators&quot;&gt;Runtime Isolators&lt;/h3&gt;
 
 &lt;p&gt;These isolators are used to ensure that a task behaves well at runtime and also provide runtime usage metrics for the given resource.&lt;/p&gt;
 
-&lt;p&gt;####posix/cpu&lt;/p&gt;
+&lt;h3 id=&quot;posixcpu&quot;&gt;posix/cpu&lt;/h3&gt;
 
 &lt;p&gt;No actual resource isolation but does support returning usage metrics.&lt;/p&gt;
 
 &lt;p&gt;Metrics: cpu user time &amp;amp; system time See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35&lt;/p&gt;
 
-&lt;p&gt;####posix/mem&lt;/p&gt;
+&lt;h3 id=&quot;posixmem&quot;&gt;posix/mem&lt;/h3&gt;
 
 &lt;p&gt;No actual resource isolation but does support returning usage metrics.&lt;/p&gt;
 
 &lt;p&gt;Metrics: mem_rss_bytes See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35&lt;/p&gt;
 
-&lt;p&gt;####posix/disk&lt;/p&gt;
+&lt;h3 id=&quot;posixdisk&quot;&gt;posix/disk&lt;/h3&gt;
 
 &lt;p&gt;Uses du -k -s to ensure tasks stay within disk usage limits.&lt;/p&gt;
 
-&lt;p&gt;####Can Kill Tasks? Yes&lt;/p&gt;
+&lt;h4 id=&quot;can-kill-tasks-yes&quot;&gt;Can Kill Tasks? Yes&lt;/h4&gt;
 
 &lt;p&gt;Metrics: disk_limit_bytes, disk_used_bytes&lt;/p&gt;
 
@@ -31,14 +31,14 @@
 // ContainerLimitation when a container exceeds its disk quota. This
 // leverages the DiskUsageCollector to ensure that we don’t induce too
 // much CPU usage and disk caching effects from running ‘du’ too
-// often.
-####disk/du&lt;/p&gt;
+// often.&lt;/p&gt;
+&lt;h4 id=&quot;diskdu&quot;&gt;disk/du&lt;/h4&gt;
 
 &lt;p&gt;Alias for posix/disk&lt;/p&gt;
 
-&lt;p&gt;####Can Kill Tasks? Yes&lt;/p&gt;
+&lt;h4 id=&quot;can-kill-tasks-yes-1&quot;&gt;Can Kill Tasks? Yes&lt;/h4&gt;
 
-&lt;p&gt;####&lt;strong&gt;marathon cpu:&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id=&quot;marathon-cpu&quot;&gt;&lt;strong&gt;marathon cpu:&lt;/strong&gt;&lt;/h4&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Marathon’s cpu setting is both a relative weight for scheduling all Docker containers across all of the Mesos slave’s CPUs and an amount of the Mesos slave’s available CPU capacity to use up&lt;/li&gt;
@@ -46,7 +46,7 @@
   &lt;li&gt;The OS should give relative weight to the Docker containers running on a Mesos slave according to their cpus values&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;###CPU Allocation&lt;/p&gt;
+&lt;h3 id=&quot;cpu-allocation&quot;&gt;CPU Allocation&lt;/h3&gt;
 
 &lt;p&gt;&lt;strong&gt;There are several flags that influence the way how Mesos limits resources. For CPU is most important isolation (we’re talking about mesos-slave/mesos-agent settings):&lt;/strong&gt;&lt;/p&gt;
 
@@ -68,13 +68,16 @@
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，生产环境不适合，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) &lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mesos isolation 配置 cgroups/cpu,cgroups/mem , cpu使用的方式是cpu shared,这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，会调用oom-killer 销毁整个容器， 相当于kill -9 杀掉进程。 生产环境要合理配置&lt;/code&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mesos isolation 配置 cgroups/cpu,cgroups/mem （没有启用CFS）， cpu使用的方式是cpu shared，这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，cgroup manager会销毁对应的容器，利用 oom-killer 来杀掉对应的进程，相当于kill -9 杀掉进程。 生产环境要合理配置任务的 mem 值来避免oom-killer发生&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mesos isolation 配置 cgroups/cpu,cgroups/mem 同时配置 CFS，这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量会下降， 但是不会被 kill&lt;/code&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mesos isolation 配置 cgroups/cpu,cgroups/mem （启用 CFS），这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于设定了一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量下降， 但是不会被 kill&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值&lt;/code&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;对于是否启用 CFS 要根据应用场景和服务类型来选择&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值, 理解这点对合理设置任务的 CPUS 很有帮助&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
@@ -85,7 +88,7 @@
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3，这样总的 cpu 核数会降低很多&lt;/code&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;针对线上服务的 marathon CPUS 值适当调低， 线上的 mesos slave CPU 使用率一般在 30% ～ 40% 之间，使用率其实不高， 调整后整体资源使用率会更合理&lt;/code&gt;&lt;/p&gt;
@@ -101,7 +104,7 @@
   &lt;li&gt;
     &lt;p&gt;https://zcox.wordpress.com/2014/09/17/cpu-resources-in-docker-mesos-and-marathon/&lt;/p&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</content><author><name></name></author><category term="mesos" /><category term="isolation" /><summary type="html"></summary></entry><entry><title type="html">重新认识 Docker、Kubernetes 和 Apache Mesos</title><link href="http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos.html" rel="alternate" type="text/html" title="重新认识 Docker、Kubernetes 和 Apache Mesos" /><published>2017-07-31T00:00:00+08:00</published><updated>2017-07-31T00:00:00+08:00</updated><id>http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos</id><content type="html" xml:base="http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos.html">&lt;p&gt;有无数的文章、讨论和社交网络上的交流在比较 Docker、Kubernetes 和 Mesos。
+&lt;/ul&gt;</content><author><name></name></author><category term="mesos" /><category term="isolation" /><category term="cgroups/cpu" /><category term="cgroups/mem" /><summary type="html"></summary></entry><entry><title type="html">重新认识 Docker、Kubernetes 和 Apache Mesos</title><link href="http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos.html" rel="alternate" type="text/html" title="重新认识 Docker、Kubernetes 和 Apache Mesos" /><published>2017-07-31T00:00:00+08:00</published><updated>2017-07-31T00:00:00+08:00</updated><id>http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos</id><content type="html" xml:base="http://localhost:4000/docker-vs-kubernetes-vs-apache-mesos.html">&lt;p&gt;有无数的文章、讨论和社交网络上的交流在比较 Docker、Kubernetes 和 Mesos。
 如果只听取部分信息，你会以为这三个开源项目正在为容器世界的霸权而决战。
 你也可能相信选择其一几乎是一个宗教选择；真正的信徒维护他们的信仰，烧死胆敢考虑其它替代品的异端者。&lt;/p&gt;
 

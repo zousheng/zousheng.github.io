@@ -10,7 +10,7 @@ permalink: /mesos-isolation-cgroups/
 <!--excerpt-->
 
 
-## Mesos task cpu & mem setting
+## Mesos isolation cgroups/cpu & cgroups/mem
 
 
 ### Runtime Isolators

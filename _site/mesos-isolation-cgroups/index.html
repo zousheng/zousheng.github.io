@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Mesos task cpu &amp; mem setting</title>
+  <title>Mesos isolation cgroups/cpu &amp; cgroups/mem</title>
   <meta name="description" content="">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/mesos-task-cpu-mem-setting/">
+  <link rel="canonical" href="http://localhost:4000/mesos-isolation-cgroups/">
   <link rel="alternate" type="application/rss+xml" title="加油的Tech Blog" href="/feed.xml">
   
   
@@ -70,7 +70,7 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Mesos task cpu &amp; mem setting</h1>
+    <h1 class="post-title" itemprop="name headline">Mesos isolation cgroups/cpu &amp; cgroups/mem</h1>
     <p class="post-meta">
       <time datetime="2017-08-11T00:00:00+08:00" itemprop="datePublished">
         
@@ -82,29 +82,29 @@
   <div class="post-content" itemprop="articleBody">
     <!--excerpt-->
 
-<h1 id="mesos-task-cpu--mem-setting">##Mesos task cpu &amp; mem setting</h1>
+<h2 id="mesos-task-cpu--mem-setting">Mesos task cpu &amp; mem setting</h2>
 
-<p>###Runtime Isolators</p>
+<h3 id="runtime-isolators">Runtime Isolators</h3>
 
 <p>These isolators are used to ensure that a task behaves well at runtime and also provide runtime usage metrics for the given resource.</p>
 
-<p>####posix/cpu</p>
+<h3 id="posixcpu">posix/cpu</h3>
 
 <p>No actual resource isolation but does support returning usage metrics.</p>
 
 <p>Metrics: cpu user time &amp; system time See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35</p>
 
-<p>####posix/mem</p>
+<h3 id="posixmem">posix/mem</h3>
 
 <p>No actual resource isolation but does support returning usage metrics.</p>
 
 <p>Metrics: mem_rss_bytes See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35</p>
 
-<p>####posix/disk</p>
+<h3 id="posixdisk">posix/disk</h3>
 
 <p>Uses du -k -s to ensure tasks stay within disk usage limits.</p>
 
-<p>####Can Kill Tasks? Yes</p>
+<h4 id="can-kill-tasks-yes">Can Kill Tasks? Yes</h4>
 
 <p>Metrics: disk_limit_bytes, disk_used_bytes</p>
 
@@ -112,14 +112,14 @@
 // ContainerLimitation when a container exceeds its disk quota. This
 // leverages the DiskUsageCollector to ensure that we don’t induce too
 // much CPU usage and disk caching effects from running ‘du’ too
-// often.
-####disk/du</p>
+// often.</p>
+<h4 id="diskdu">disk/du</h4>
 
 <p>Alias for posix/disk</p>
 
-<p>####Can Kill Tasks? Yes</p>
+<h4 id="can-kill-tasks-yes-1">Can Kill Tasks? Yes</h4>
 
-<p>####<strong>marathon cpu:</strong></p>
+<h4 id="marathon-cpu"><strong>marathon cpu:</strong></h4>
 
 <ul>
   <li>Marathon’s cpu setting is both a relative weight for scheduling all Docker containers across all of the Mesos slave’s CPUs and an amount of the Mesos slave’s available CPU capacity to use up</li>
@@ -127,7 +127,7 @@
   <li>The OS should give relative weight to the Docker containers running on a Mesos slave according to their cpus values</li>
 </ul>
 
-<p>###CPU Allocation</p>
+<h3 id="cpu-allocation">CPU Allocation</h3>
 
 <p><strong>There are several flags that influence the way how Mesos limits resources. For CPU is most important isolation (we’re talking about mesos-slave/mesos-agent settings):</strong></p>
 
@@ -149,13 +149,16 @@
     <p><code class="highlighter-rouge">mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，生产环境不适合，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) </code></p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">mesos isolation 配置 cgroups/cpu,cgroups/mem , cpu使用的方式是cpu shared,这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，会调用oom-killer 销毁整个容器， 相当于kill -9 杀掉进程。 生产环境要合理配置</code></p>
+    <p><code class="highlighter-rouge">mesos isolation 配置 cgroups/cpu,cgroups/mem （没有启用CFS）， cpu使用的方式是cpu shared，这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，cgroup manager会销毁对应的容器，利用 oom-killer 来杀掉对应的进程，相当于kill -9 杀掉进程。 生产环境要合理配置任务的 mem 值来避免oom-killer发生</code></p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">mesos isolation 配置 cgroups/cpu,cgroups/mem 同时配置 CFS，这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量会下降， 但是不会被 kill</code></p>
+    <p><code class="highlighter-rouge">mesos isolation 配置 cgroups/cpu,cgroups/mem （启用 CFS），这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于设定了一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量下降， 但是不会被 kill</code></p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值</code></p>
+    <p><code class="highlighter-rouge">对于是否启用 CFS 要根据应用场景和服务类型来选择</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值, 理解这点对合理设置任务的 CPUS 很有帮助</code></p>
   </li>
 </ul>
 
@@ -166,7 +169,7 @@
     <p><code class="highlighter-rouge">沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率</code></p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3，这样总的 cpu 核数会降低很多</code></p>
+    <p><code class="highlighter-rouge">针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3</code></p>
   </li>
   <li>
     <p><code class="highlighter-rouge">针对线上服务的 marathon CPUS 值适当调低， 线上的 mesos slave CPU 使用率一般在 30% ～ 40% 之间，使用率其实不高， 调整后整体资源使用率会更合理</code></p>
