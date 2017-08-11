@@ -2,7 +2,7 @@
 layout: post
 title: Mesos task cpu & mem setting
 categories: [Technology]
-tags: [mesos, isolation, cgroups/mem, cgroups/cpu]
+tags: [mesos, isolation]
 permalink: /mesos-task-cpu-mem-setting/
 ---
 
