@@ -84,7 +84,7 @@ Alias for posix/disk
 
 #### 调优
 
- * `沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率`
+ * `沙箱所有服务的marathon上的 CPUS 改为 0.1。目前 沙箱 mesos slave 机器整体 cpu 使用率很低，大约在10% ~ 15%左右，cpus 配置为0.1以后，每个 mesos slave 可以运行更多的任务。`
  
  * `针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3`
 
