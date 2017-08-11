@@ -13,7 +13,8 @@ permalink: /mesos-isolation-cgroups/
 > 是如何工作的，为什么明明设置了 cpus 限制， 但是任务用的 cpu
 > 还是会超过阈值呢？最近偶然看到了 cgruops cfs
 > 相关介绍才明白，设置cgroups/cpu 的同时还要设置cgroups cfs, 这样 cpu
-> 才是独占的， 而默认情况下 cpu 是共享的。下面是收集的相关资料和总结。
+> 才是独占的， 而默认情况下 cpu 是共享的。认识到这点后对我们的沙箱的 marathon
+> task cpus 进行了调整，cpu 使用率大大增加， 服务器可以缩减 2/5. 下面是收集的相关资料和总结。
 
 
 ## Mesos isolation cgroups/cpu & cgroups/mem
