@@ -10,31 +10,30 @@ permalink: /mesos-isolation-cgroups/
 <!--excerpt-->
 
 
-##Mesos task cpu & mem setting
-=============
+## Mesos task cpu & mem setting
 
 
-###Runtime Isolators
+### Runtime Isolators
 
 These isolators are used to ensure that a task behaves well at runtime and also provide runtime usage metrics for the given resource.
 
-####posix/cpu
+### posix/cpu
 
 No actual resource isolation but does support returning usage metrics.
 
 Metrics: cpu user time & system time See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35
 
-####posix/mem
+### posix/mem
 
 No actual resource isolation but does support returning usage metrics.
 
 Metrics: mem_rss_bytes See: https://github.com/apache/mesos/blob/037a346a205ad7bdba99d771855f8caeea835d4a/src/usage/usage.cpp#L35
 
-####posix/disk
+### posix/disk
 
 Uses du -k -s to ensure tasks stay within disk usage limits.
 
-####Can Kill Tasks? Yes
+#### Can Kill Tasks? Yes
 
 Metrics: disk_limit_bytes, disk_used_bytes
 
@@ -43,21 +42,21 @@ Metrics: disk_limit_bytes, disk_used_bytes
 // leverages the DiskUsageCollector to ensure that we don't induce too
 // much CPU usage and disk caching effects from running 'du' too
 // often.
-####disk/du
+#### disk/du
 
 Alias for posix/disk
 
-####Can Kill Tasks? Yes
+#### Can Kill Tasks? Yes
 
 
-####**marathon cpu:**
+#### **marathon cpu:**
 
 * Marathon’s cpu setting is both a relative weight for scheduling all Docker containers across all of the Mesos slave’s CPUs and an amount of the Mesos slave’s available CPU capacity to use up
 * A process running in a Docker container on a Mesos slave thinks it has the same number of CPUs as the underlying machine
 * The OS should give relative weight to the Docker containers running on a Mesos slave according to their cpus values
 
 
-###CPU Allocation
+### CPU Allocation
 
 
 **There are several flags that influence the way how Mesos limits resources. For CPU is most important isolation (we're talking about mesos-slave/mesos-agent settings):**
@@ -69,7 +68,7 @@ Alias for posix/disk
 <br />
 
 
-####总结:
+#### 总结:
 
 
   * `mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，生产环境不适合，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) `
