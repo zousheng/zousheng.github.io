@@ -9,6 +9,12 @@ permalink: /mesos-isolation-cgroups/
 
 <!--excerpt-->
 
+> 最近一直在纠结 mesos/marathon 中 isolation cgroups/cpu
+> 是如何工作的，为什么明明设置了 cpus 限制， 但是任务用的 cpu
+> 还是会超过阈值呢？最近偶然看到了 cgruops cfs
+> 相关介绍才明白，设置cgroups/cpu 的同时还要设置cgroups cfs, 这样 cpu
+> 才是独占的， 而默认情况下 cpu 是共享的。下面是收集的相关资料和总结。
+
 
 ## Mesos isolation cgroups/cpu & cgroups/mem
 
@@ -71,24 +77,24 @@ Alias for posix/disk
 #### 总结:
 
 
-  * `mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，生产环境不适合，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) `
+  * `mesos默认isolation使用的是 posix/cpu,posix/mem, 这个配置只适合开发环境用，不适合生产环境，因为它没有对资源做任何的限制。(生产环境应该使用 cgroups/cpu,cgroups/mem.) `
   
-  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （没有启用CFS）， cpu使用的方式是cpu shared，这种方式对cpu没有严格限制，机器上的任何task都可以访问机器上所有cpu资源; cgroups/mem对内存限制严格，如果超过配置的数值，cgroup manager会销毁对应的容器，利用 oom-killer 来杀掉对应的进程，相当于kill -9 杀掉进程。 生产环境要合理配置任务的 mem 值来避免oom-killer发生`
+  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （默认 CFS 不会启用）， cpu 使用的方式是cpu shared，这种方式对 cpu 没有严格限制，机器上的任何 task 都可以访问机器上所有 cpu 资源; cgroups/mem 对内存限制严格，如果超过配置的数值，cgroup manager 会销毁对应的容器，利用 oom-killer 来杀掉对应的进程，相当于 kill -9 杀掉进程。 生产环境要合理配置任务的 mem 值来避免oom-killer发生`
   
-  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （启用 CFS），这个相当于配置了独占cpu, 如果cpus 配置了1， 那么这个容器的cpu使用率就不会超过100%. 相当于设定了一个hard limit. k8s 和 DC/OS 都是使用的这种资源隔离方式。 当服务要用到的 cpu 时间片大于设定的阈值时，服务性能会受到影响， 吞吐量下降， 但是不会被 kill`  
+  * `mesos isolation 配置 cgroups/cpu,cgroups/mem （启用 CFS），这个相当于配置了独占 cpu, 例如 marathon 中服务的 cpus 配置为1， 那么这个容器的 cpu 使用率就不会超过 100%. 相当于设定了一个 hard limit。 k8s 和 DC/OS 都是使用的这种资源隔离方式。当服务要用到的 cpu 时间片大于设定的阈值时，服务所在的容器不会被销毁，但是服务性能会受到影响， 吞吐量下降。而 mem 超过阈值 容器会被销毁。`  
   
   * `对于是否启用 CFS 要根据应用场景和服务类型来选择`
 
-  * `marathon 上配置的 cpus 数值，不仅是一个cpu的数值，同时也可以指cpu资源的相对权重值, 理解这点对合理设置任务的 CPUS 很有帮助`
+  * `marathon 上配置的 cpus 数值，不仅是一个 cpu 的数值，同时也可以指 cpu 资源的相对权重值, 理解这点对合理设置任务的 cpus 很有帮助`
 
 
 #### 调优
 
- * `沙箱所有服务的marathon上的 CPUS 改为 0.1。目前 沙箱 mesos slave 机器整体 cpu 使用率很低，大约在10% ~ 15%左右，cpus 配置为0.1以后，每个 mesos slave 可以运行更多的任务。`
+ * `沙箱 marathon 上，所有服务的 cpus 设置 改为0.1。目前沙箱 mesos slave 机器整体 cpu 使用率很低，大约在10% ~ 15%左右，cpus 配置为0.1以后，每个 mesos slave 可以运行更多的任务。`
  
- * `针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3`
+ * `针对私有部署中的服务 marathon cpus 可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3`
 
-* `针对线上服务的 marathon CPUS 值适当调低， 线上的 mesos slave CPU 使用率一般在 30% ～ 40% 之间，使用率其实不高， 调整后整体资源使用率会更合理`
+* `针对线上服务 cpus 值可以适当调低， 线上的 mesos slave CPU 使用率一般在 30% ～ 40% 之间，使用率其实不高， 调整后整体资源使用率会更合理`
 
 `Reference:`
 

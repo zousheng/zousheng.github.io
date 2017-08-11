@@ -82,7 +82,15 @@
   <div class="post-content" itemprop="articleBody">
     <!--excerpt-->
 
-<h2 id="mesos-task-cpu--mem-setting">Mesos task cpu &amp; mem setting</h2>
+<blockquote>
+  <p>最近一直在纠结 mesos/marathon 中 isolation cgroups/cpu
+是如何工作的，为什么明明设置了 cpus 限制， 但是任务用的 cpu
+还是可以超过阈值呢？最近偶然看到了 cgruops cfs
+相关介绍才明白，设置cgroups/cpu 的同时还要设置cgroups cfs, 这样 cpu
+才是独占的， 而默认情况下 cpu 是共享的。</p>
+</blockquote>
+
+<h2 id="mesos-isolation-cgroupscpu--cgroupsmem">Mesos isolation cgroups/cpu &amp; cgroups/mem</h2>
 
 <h3 id="runtime-isolators">Runtime Isolators</h3>
 
@@ -142,7 +150,7 @@
 
 <p><br /></p>
 
-<p>####总结:</p>
+<h4 id="总结">总结:</h4>
 
 <ul>
   <li>
@@ -166,7 +174,7 @@
 
 <ul>
   <li>
-    <p><code class="highlighter-rouge">沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率</code></p>
+    <p><code class="highlighter-rouge">沙箱所有服务的marathon上的 CPUS 改为 0.1。目前 沙箱 mesos slave 机器整体 cpu 使用率很低，大约在10% ~ 15%左右，cpus 配置为0.1以后，每个 mesos slave 可以运行更多的任务。</code></p>
   </li>
   <li>
     <p><code class="highlighter-rouge">针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3</code></p>

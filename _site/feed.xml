@@ -1,7 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.5.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-08-11T09:23:42+08:00</updated><id>http://localhost:4000/</id><title type="html">加油的Tech Blog</title><subtitle>一个进入IT行业7年之久的IT从业者，第一年做java二次开发，第二年被Linux所吸引，转为linux Admin, 再之后到了互联网时代，也转型到了互联网运维，从事云计算和各种分布式组件。现在又到了AI和以数据驱动的时代，希望能跟上技术更新的步伐，不断提高个人技能.....
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.5.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-08-11T14:17:19+08:00</updated><id>http://localhost:4000/</id><title type="html">加油的Tech Blog</title><subtitle>一个进入IT行业7年之久的IT从业者，第一年做java二次开发，第二年被Linux所吸引，转为linux Admin, 再之后到了互联网时代，也转型到了互联网运维，从事云计算和各种分布式组件。现在又到了AI和以数据驱动的时代，希望能跟上技术更新的步伐，不断提高个人技能.....
 </subtitle><entry><title type="html">Mesos isolation cgroups/cpu &amp;amp; cgroups/mem</title><link href="http://localhost:4000/mesos-isolation-cgroups/" rel="alternate" type="text/html" title="Mesos isolation cgroups/cpu &amp; cgroups/mem" /><published>2017-08-11T00:00:00+08:00</published><updated>2017-08-11T00:00:00+08:00</updated><id>http://localhost:4000/mesos-task-cpu-mem-setting</id><content type="html" xml:base="http://localhost:4000/mesos-isolation-cgroups/">&lt;!--excerpt--&gt;
 
-&lt;h2 id=&quot;mesos-task-cpu--mem-setting&quot;&gt;Mesos task cpu &amp;amp; mem setting&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;最近一直在纠结 mesos/marathon 中 isolation cgroups/cpu
+是如何工作的，为什么明明设置了 cpus 限制， 但是任务用的 cpu
+还是可以超过阈值呢？最近偶然看到了 cgruops cfs
+相关介绍才明白，设置cgroups/cpu 的同时还要设置cgroups cfs, 这样 cpu
+才是独占的， 而默认情况下 cpu 是共享的。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;mesos-isolation-cgroupscpu--cgroupsmem&quot;&gt;Mesos isolation cgroups/cpu &amp;amp; cgroups/mem&lt;/h2&gt;
 
 &lt;h3 id=&quot;runtime-isolators&quot;&gt;Runtime Isolators&lt;/h3&gt;
 
@@ -61,7 +69,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;p&gt;####总结:&lt;/p&gt;
+&lt;h4 id=&quot;总结&quot;&gt;总结:&lt;/h4&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
@@ -85,7 +93,7 @@
 
 &lt;ul&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;沙箱所有服务的marathon上的 CPUS 改为 0.1, 沙箱的mesos slave 整体 cpu 使用率很低，在15%左右， 所以这个数值没有问题，可以提高资源利用率&lt;/code&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;沙箱所有服务的marathon上的 CPUS 改为 0.1。目前 沙箱 mesos slave 机器整体 cpu 使用率很低，大约在10% ~ 15%左右，cpus 配置为0.1以后，每个 mesos slave 可以运行更多的任务。&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;针对私有部署中的服务 marathon CPUS可以调低 0.1， 个别 cpu 密集型的服务 e.g. webapp, gateway 可以改为0.2 或者0.3&lt;/code&gt;&lt;/p&gt;
