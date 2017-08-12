@@ -17,7 +17,7 @@ permalink: /mesos-isolation-cgroups/
 > task cpus 进行了调整，cpu 使用率大大增加， 服务器可以缩减 2/5. 下面是收集的相关资料和总结。
 
 
-## Mesos isolation cgroups/cpu & cgroups/mem
+## Mesos isolation cgroups/cpu & cgroups/mem (based on mesos 1.1.0)
 
 
 ### Runtime Isolators
